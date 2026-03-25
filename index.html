@@ -77,11 +77,10 @@
 <body>
     <div class="container">
         <h1>LAZ Parking Verification</h1>
-        <p>Please complete the reCAPTCHA to continue with your parking reservation.</p>
+        <p>Verifying your reCAPTCHA...</p>
 
-        <form id="captchaForm">
-            <div class="g-recaptcha" data-sitekey="6Ld1LpgsAAAAAL_Pl388916q1zn6XimlfWc2Ehl9" data-callback="onCaptchaSuccess" data-expired-callback="onCaptchaExpired"></div>
-        </form>
+        <!-- Invisible reCAPTCHA -->
+        <div id="captchaContainer" class="g-recaptcha" data-sitekey="6LeYMJgsAAAAADZOvlCI0ijtoGJrnXUeiboNzkfy" data-callback="onCaptchaSuccess" data-expired-callback="onCaptchaExpired" data-size="invisible"></div>
 
         <div id="statusMessage" class="status"></div>
 
@@ -99,12 +98,20 @@
     <script>
         let captchaToken = '';
 
+        // Auto-execute the invisible reCAPTCHA when page loads
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                grecaptcha.execute();
+            }, 500);
+        });
+
         function onCaptchaSuccess(token) {
             captchaToken = token;
             
             // Display token for reference
             document.getElementById('tokenText').textContent = token;
             document.getElementById('tokenDisplay').style.display = 'block';
+            document.getElementById('statusMessage').querySelector('p') && (document.getElementById('statusMessage').innerHTML = '');
             
             // Automatically copy token to clipboard
             navigator.clipboard.writeText(token).then(function() {
